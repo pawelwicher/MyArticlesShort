@@ -1,0 +1,23 @@
+﻿Funkcja wyznaczająca akronim, testy jednostkowe
+
+// testy
+module AcronymTests =
+
+    open NUnit.Framework
+    open Acronym
+        
+    [&lt;TestCase("Portable Network Graphics", ExpectedResult = "PNG")&gt;]
+    [&lt;TestCase("Hyper Text Markup Language", ExpectedResult = "HTML")&gt;]
+    [&lt;TestCase("PHP: Hypertext Preprocessor", ExpectedResult = "PHP")&gt;]
+    let ``Phrase to acronym`` (phrase: string) =
+        acronym phrase
+
+// wyznaczanie akronimów
+module Acronym =
+
+    let delimiters = [|' '; ','|]
+
+    let acronym (phrase : string) : string = 
+        match phrase with
+        | "" -> ""
+        | _  -> delimiters |> phrase.Split |> Array.map(fun x -> x.ToUpper().[0].ToString())|> Array.reduce(fun acc x -> acc + x)

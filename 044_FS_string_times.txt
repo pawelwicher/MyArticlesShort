@@ -1,0 +1,7 @@
+﻿let rec times (s : string) n = match n with | 1 -> s | _ -> s + times s (n - 1)
+
+printfn "%s" (times "*" 5)
+printfn "%s" (times "he " 5)
+
+// *****
+// he he he he he

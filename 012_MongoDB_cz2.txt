@@ -1,0 +1,95 @@
+﻿>use mydb
+switched to db mydb
+
+Uzupełniamy kolekcję 'persons' (możemy wstawiać pojedyncze dokumenty lub cała ich tablicę - składnia javascript):
+
+> db.persons.insert({ name: "John", age: 33 })
+
+lub
+
+> var personList =
+... [
+...   { name: "John Smith", age: 33  , show = false },
+...   { name: "George Gilinger", age: 55  , show = false },
+...   { name: "Mary Haroldson", age: 21  , show = false },
+...   { name: "Tom Gready", age: 32  , show = false },
+...   { name: "Ann Little", age: 21  , show = false },
+...   { name: "John Bold", age: 24  , show = false },
+...   { name: "Peggy Olson", age: 30  , show = false },
+...   { name: "Ed Burst", age: 37  , show = false },
+...   { name: "Francis Healy", age: 27  , show = false },
+...   { name: "Dona Brown", age: 25 }
+... ]
+> db.persons.insert(personList)
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 10,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+
+> db.persons.find()
+{ "_id" : ObjectId("56e84a44e9564dc97d7101b8"), "name" : "John Smith", "age" : 33, "job" }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101b9"), "name" : "George Gilinger", "age" : 55 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101ba"), "name" : "Mary Haroldson", "age" : 21 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bb"), "name" : "Tom Gready", "age" : 32 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bc"), "name" : "Ann Little", "age" : 21 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bd"), "name" : "John Bold", "age" : 24 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101be"), "name" : "Peggy Olson", "age" : 30 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bf"), "name" : "Ed Burst", "age" : 37 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101c0"), "name" : "Francis Healy", "age" : 27 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101c1"), "name" : "Dona Brown", "age" : 25 }
+
+> db.persons.findOne()
+{
+        "_id" : ObjectId("56e84a44e9564dc97d7101b8"),
+        "name" : "John Smith",
+        "age" : 33,
+        "job" : "saler"
+}
+
+> db.persons.find({name: "Ed Burst"})
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bf"), "name" : "Ed Burst", "age" : 37 }
+
+> db.persons.find({name: { $in: [ "Ed Burst", "Peggy Olson" ] } })
+{ "_id" : ObjectId("56e84a44e9564dc97d7101be"), "name" : "Peggy Olson", "age" : 30 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bf"), "name" : "Ed Burst", "age" : 37 }
+
+> db.persons.find({ age: { $lt: 25 } })
+{ "_id" : ObjectId("56e84a44e9564dc97d7101ba"), "name" : "Mary Haroldson", "age" : 21 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bc"), "name" : "Ann Little", "age" : 21 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bd"), "name" : "John Bold", "age" : 24 }
+
+> db.persons.find( { age: { $gt: 25, $lt: 30 } })
+{ "_id" : ObjectId("56e84a44e9564dc97d7101c0"), "name" : "Francis Healy", "age" : 27 }
+
+> db.persons.find( { age: { $gte: 25, $lte: 30 } })
+{ "_id" : ObjectId("56e84a44e9564dc97d7101be"), "name" : "Peggy Olson", "age" : 30 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101c0"), "name" : "Francis Healy", "age" : 27 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101c1"), "name" : "Dona Brown", "age" : 25 }
+
+> db.persons.find( { name: /J/ } )
+{ "_id" : ObjectId("56e84a44e9564dc97d7101b8"), "name" : "John Smith", "age" : 33 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bd"), "name" : "John Bold", "age" : 24 }
+
+> db.persons.find( { name: /A/ } )
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bc"), "name" : "Ann Little", "age" : 21 }
+
+> db.persons.find( { name: /Olson/ } )
+{ "_id" : ObjectId("56e84a44e9564dc97d7101be"), "name" : "Peggy Olson", "age" : 30 }
+
+> db.persons.find( { name: /B/ } )
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bd"), "name" : "John Bold", "age" : 24 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bf"), "name" : "Ed Burst", "age" : 37 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101c1"), "name" : "Dona Brown", "age" : 25 }
+
+> db.persons.find( { name: /B/, age: { $gt: 30 } } )
+{ "_id" : ObjectId("56e84a44e9564dc97d7101bf"), "name" : "Ed Burst", "age" : 37 }
+
+> db.persons.find( { $or: [ { age: 30  , show = false }, { age: 33 } ] } )
+{ "_id" : ObjectId("56e84a44e9564dc97d7101b8"), "name" : "John Smith", "age" : 33 }
+{ "_id" : ObjectId("56e84a44e9564dc97d7101be"), "name" : "Peggy Olson", "age" : 30 }

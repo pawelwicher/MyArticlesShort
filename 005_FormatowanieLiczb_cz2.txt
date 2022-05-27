@@ -1,0 +1,21 @@
+﻿Zastosujemy warunkowy ciąg formatujący, który zawiera 3 sekcje:
+- dla liczby dodatniej
+- dla liczby ujemnej
+- dla wartości 0
+
+Sekcje w ciągu formatującym oddzielone są znakiem ';'
+
+Przykład:
+
+var a = 100;
+Console.WriteLine($"{a:Plus ##;Minus ##;Zero}");
+var b = -100;
+Console.WriteLine($"{b:Plus ##;Minus ##;Zero}");
+var c = 0;
+Console.WriteLine($"{c:Plus ##;Minus ##;Zero}");
+
+Wynik:
+
+Plus 100
+Minus 100
+Zero

@@ -1,0 +1,13 @@
+﻿let GetTeperatureInWroclaw =
+    let url = "http://www.accuweather.com/pl/pl/wrocaw/273125/current-weather/273125"
+    let uri = Uri(url)
+    let req = WebRequest.Create(uri)
+    use resp = req.GetResponse()
+    use stream = resp.GetResponseStream()
+    use reader = new IO.StreamReader(stream)
+    let html = reader.ReadToEnd()
+    let temp = Regex.Match(html, @"<span class=""temp"">(\d+)<span>").Groups.[1].Value
+    let result = System.String.Format("Aktualnie we Wrocławiu mamy {0}°C", temp)
+    result
+
+getTeperatureInWroclaw |> System.Console.WriteLine

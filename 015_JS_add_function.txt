@@ -1,0 +1,27 @@
+﻿W Javascript mamy kilka wbudowanych (natywnych) obiektów:
+
+var o = new Object();
+var s = new String();
+var n = new Number();
+var b = new Boolean();
+var a = new Array();
+var r = new RegExp();
+var f = new Function();
+var d = new Date();
+
+Każda funkcja w Javascript ma pole 'prototype', dzięki któremu
+możemy dodać nowe funkcjonalności do istniejących obiektów.
+
+Pole 'prototype' jest podstawowym składnikiem programowania obiektowego w Javascript.
+
+Teraz przykład. Obiekt 'Number' - metoda 'times':
+
+Number.prototype.times = function(f) { for(var i = 1; i < this + 1; i++) f(i); };
+
+(5).times(function(index) { console.log('hello ' + index); })
+
+hello 1
+hello 2
+hello 3
+hello 4
+hello 5

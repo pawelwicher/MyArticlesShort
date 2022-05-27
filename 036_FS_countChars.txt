@@ -1,0 +1,10 @@
+﻿let countChars (s : string) = 
+    s.ToCharArray()
+    |> List.ofArray
+    |> List.groupBy(fun x -> x)
+    |> List.map(fun (c, l) -> (c, l.Length))
+    |> Map.ofSeq
+
+printfn "%A" ("abacdacb" |> countChars)
+
+// map [('a', 3); ('b', 2); ('c', 2); ('d', 1)]

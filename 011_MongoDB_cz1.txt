@@ -1,0 +1,88 @@
+﻿MongoDB jest zyskującą na popularności nierelacyjną (noSQL) bazą danych.
+
+Dane w MongoDB są składowane w kolekcjach (analogia do relacyjnych tabel), natomiast
+odpowiednikiem wiersza jest dokument.
+
+Bazy nierelacyjne takie jak MongoDB nie mają schematu.
+Nie definuje się tabel o stałej liczbie kolumn, gdzie każda kolumna ma typ danych.
+
+W Mongo odpowiednikiem relacyjnej tabeli jest kolekcja,
+która zawiera dokumenty w formacie JSON o dowolnej stukturze.
+
+
+W pierwszym podejściu do Mongo pokaże jak uruchomić proces / demon bazy danych ('mongod') oraz
+pokaże podstawowe operacje z wykorzystaniem klienta konsolowego 'mongo'.
+
+W kolejnych wpisach o Mongo postaram się poszerzyć informacje dotyczące zapytań a także
+spróbuję się podłączyć z bazą za pomocą sterownika dla .NET.
+
+
+Instalacja bazy:
+Standardowo (w systemie Windows) baza instaluje się w folderze:
+C:\Program Files\MongoDB\Server\3.2\bin
+
+Uruchomienie demona:
+Domyślną scieżka do katalogu z bazą jest C:\data\db
+W moim przykładzie zostanie to zmienione - utworzę katalog:
+C:\Program Files\MongoDB\Server\3.2\bin\data\db
+
+Teraz mogę uruchomić demona. Otwieramy cmd i wydajemy komendę:
+cd "C:\Program Files\MongoDB\Server\3.2\bin"
+a następnie
+mongod.exe --dbpath "C:\Program Files\MongoDB\Server\3.2\bin\data\db"
+
+Demon Mongo działa. Możemy się połączyć z bazą.
+
+Otwieramy kolejne okienko cmd:
+cd "C:\Program Files\MongoDB\Server\3.2\bin"
+i
+mongo.exe
+
+Teraz najlepsze, Mongo nie posiada schematu, dlatego nie ma potrzeby definować bazy danych czy kolekcji
+tylko zacząć jej używać. Składnia poleceń bardzo podobna do javascript'u
+
+Wybieramy bazę:
+
+>use mydb
+switched to db mydb
+
+Uzupełniamy kolekcję 'persons' (nie musimy jej wcześniej tworzyć - wystarczy, że użyjemy jej nazwy).
+
+> db.persons.insert({ name: "John", age: 33 })
+WriteResult({ "nInserted" : 1 })
+> db.persons.insert({ name: "Bob", age: 35, hobby: "football" })
+WriteResult({ "nInserted" : 1 })
+> db.persons.insert({ name: "Ed", age: 45 })
+WriteResult({ "nInserted" : 1 })
+
+wstawiliśmy 3 dokumety do kolekcji 'persons'. Jak widać 'Bob' ma dodatkowy atrybut - 'hobby'.
+To pokazuje, że każdy z dokumentów może mieć dowolną strukturę.
+
+Po wstawieniu 3 dokumentów, wyszukamy je. Służy do tego metoda 'find' wywoływana na kolekcji:
+
+> db.persons.find()
+{ "_id" : ObjectId("56e70d83db8a5a8e393b0d01"), "name" : "John", "age" : 33 }
+{ "_id" : ObjectId("56e70da3db8a5a8e393b0d02"), "name" : "Bob", "age" : 35, "hobby" : "football" }
+{ "_id" : ObjectId("56e70dc2db8a5a8e393b0d03"), "name" : "Ed", "age" : 45 }
+
+okazuje się, że oprócz danych, które zostały wprowadzone jawnie każdy dokument otrzymał pole "_id",
+które jest kluczem tego dokumentu - jest to automatycznie wygenerowana, losowa unikalna wartość.
+
+Spróbujmy jeszcze wykonać jakieś proste zapytania:
+
+> db.persons.find().limit(1)
+{ "_id" : ObjectId("56e70d83db8a5a8e393b0d01"), "name" : "John", "age" : 33 }
+
+> db.persons.find({ "name": "Bob"})
+{ "_id" : ObjectId("56e70da3db8a5a8e393b0d02"), "name" : "Bob", "age" : 35, "hobby" : "football" }
+
+> db.persons.find({ "hobby" : { $exists: true } })
+{ "_id" : ObjectId("56e70da3db8a5a8e393b0d02"), "name" : "Bob", "age" : 35, "hobby" : "football" }
+
+> db.persons.find({ "hobby" : { $exists: false } })
+{ "_id" : ObjectId("56e70d83db8a5a8e393b0d01"), "name" : "John", "age" : 33 }
+{ "_id" : ObjectId("56e70dc2db8a5a8e393b0d03"), "name" : "Ed", "age" : 45 }
+
+To na rozgrzewkę. 
+
+W następnym wpisie, postaram się pokazać więcej bajerów związanych z zapytaniami do kolekcji MongoDB.

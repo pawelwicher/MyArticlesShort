@@ -1,0 +1,27 @@
+﻿Wspólne wyrażenie tablicowe (CTE - Common Table Expressions)
+pozwalają w łatwiej tworzyć skompilkowane zapytanie
+poprzez rozbicie takiego zapytania na fragmenty.
+
+Przy okazji kod jest czytelniejszy.
+
+Użycie CTE nie ma wpływu na wydajność.
+
+Do utworzenia wyrażenie CTE służy słowo kluczowe <strong>WITH</strong>
+
+Przykład:
+
+use northwind
+
+with Beverages as
+(
+select p.ProductID, p.ProductName, p.SupplierID
+  from Products p
+  join Categories c on p.CategoryID = c.CategoryID
+ where c.CategoryName = 'Beverages'
+ )
+ select b.ProductName, s.CompanyName 
+   from Beverages b
+   join Suppliers s on s.SupplierID = b.SupplierID
+
+Wyrażenie CTE, nazwane 'Beverages' zostaje użyte w zapytaniu końcowym,
+które zwraca dostawców produktów z kategorii 'Beverages'

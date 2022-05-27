@@ -1,0 +1,71 @@
+﻿(* Parzysta / nieparzysta ************************************************************************)
+
+let (|Even|Odd|) n = if n % 2 = 0 then Even else Odd
+
+let testNum n =
+    match n with
+    | Even -> printfn "%i is even" n
+    | Odd -> printfn "%i is odd" n
+
+
+(* Rozpoznawanie listy ***************************************************************************)
+
+let (|EmptyList|OneElementList|MoreThenOneElementList|) list =
+    match list with
+    | []  -> EmptyList
+    | [_] -> OneElementList
+    | _   -> MoreThenOneElementList
+
+let printList list =
+    match list with
+    | EmptyList              -> printfn "Empty list"
+    | OneElementList         -> printfn "%O" list.Head
+    | MoreThenOneElementList -> list |> List.iter(fun x -> printfn "%O" x)
+
+printList []
+printList ["hello"]
+printList [1; 2; 3; 4; 5]
+
+
+(* Sprawdzanie czy string zaczyna się od konkretnego znaku ('a', 'b' lub 'c') ********************)
+
+let isMatch regex str = Regex(regex).Match(str).Success
+
+let (|StartsWithA|StartsWithB|StartsWithC|StartsWithOtherChar|) str =
+    if isMatch "^a" str then 
+        StartsWithA
+    else if isMatch "^b" str then 
+        StartsWithB
+    else if isMatch "^c" str then 
+        StartsWithC
+    else
+        StartsWithOtherChar
+
+let startsWithABC str =
+    match str with
+    | StartsWithA -> printfn "StartsWithA"
+    | StartsWithB -> printfn "StartsWithB"
+    | StartsWithC -> printfn "StartsWithC"
+    | StartsWithOtherChar -> printfn "StartsWithOtherChar"
+
+
+(* Parsowanie daty w różnych formatach - wykorzystanie typu 'option' *****************************)
+
+let (|Integer|_|) (str: string) =
+    let mutable intvalue = 0
+    if System.Int32.TryParse(str, &intvalue) then Some(intvalue)
+    else None
+
+let (|ParseRegex|_|) regex str =
+    let m = Regex(regex).Match(str)
+    if m.Success then Some (List.tail [ for x in m.Groups -> x.Value ]) else None
+
+let parseDate str =
+    match str with
+        | ParseRegex "^(\d{4})-(\d{2})-(\d{2})$" [Integer y; Integer m; Integer d]
+        | ParseRegex "^(\d{2})-(\d{2})-(\d{4})$" [Integer d; Integer m; Integer y] -> Some(new DateTime(y, m, d))
+        | _ -> None
+
+let date1 = parseDate "2016-07-13"  // DateTime
+let date2 = parseDate "14-07-2016"  // DateTime
+let date3 = parseDate "aaaaaaaaaa"  // null

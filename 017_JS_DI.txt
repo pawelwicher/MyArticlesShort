@@ -1,0 +1,73 @@
+﻿W tym przykładzie zaprezentuję własną implementację kontenera IoC w JavaScript.
+Koncepcja IoC oraz Dependency Injection jest ogólnie znana, nie ma potrzeby jej omawiać.
+
+W skrócie: kontenery IoC ułatwiają tworzenie obiektów - żeby utworzyć obiekt nie musimy znać
+komponentów potrzebnych do jego stworzenia, tym zajmuje się sam kontener.
+
+Teraz trochę kodu:
+
+// Funkcja - konstruktor kontenera
+// dependency - obiekt przechowujący zależności (klucz: nazwa funkcji, wartość: implementacja)
+function Container(dependency) {
+  this.dependency = dependency;
+}
+
+// Metoda rozwiązująca zależności
+// Zależności (parametry funkcji 'func', wyciągnięte regex'em) są pobierane z contera i wstrzykiwane do 'func'
+Container.prototype.resolve = function(func) {
+  var funcStr = func.toString();
+  var deps = funcStr.slice(funcStr.indexOf('(') + 1, funcStr.indexOf(')')).match(/([^\s,]+)/g);
+   
+  if(deps === null) {
+    return func;
+  }
+  else {
+    deps = deps.map(dep => this.dependency[dep]); 
+    return function() {
+      return func.apply(null, deps);
+    }
+  }
+}
+
+// Stworzenie obiektu 'dependency'
+var dependency = {
+  'print': function(text, times) { for(var i = 0; i < times; i++) console.log(text);  , show = false },
+  'hello': function() { return 'Hello';  , show = false },
+  'getNumber': function() { return 3; }
+}
+
+// Storzenie kontenera
+var container = new Container(dependency);
+
+// Załóżmy, że mamy obiekt (funkcję 'fun'), która korzysta z innych obiektów (funkcji).
+// Informacja o komponetach, których potrzebuje 'fun' jest przechowywana w kontenerze.
+
+function fun(getNumber, print) {
+  var n = getNumber();
+  print(n, 1);
+}
+
+// Za pomocą kontenera tworzymy funkcję, która do 'fun' wstrzykuje jej zależności
+var fun1 = container.resolve(fun);
+
+// Wywołanie 'fun1'
+fun1();
+// 3
+
+// Wszystko ok. 'fun1' jest pozbawione zależności, które miało 'fun'.
+// Wywołujemy tę funkcję bez wiedzy o jej zależnościach.
+
+// Zmodyfikujmy 'fun'
+function fun(getNumber, print, hello) {
+  var n = getNumber();
+  print(hello(), n);
+}
+
+// Tworzymy 'fun2'
+var fun2 = container.resolve(fun);
+
+// Wywołanie 'fun2'
+fun2();
+// Hello
+// Hello
+// Hello

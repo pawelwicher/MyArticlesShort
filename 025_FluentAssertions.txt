@@ -1,0 +1,14 @@
+﻿var number = 1;
+number.Should().BePositive().And.BeGreaterOrEqualTo(1).And.NotBe(0).And.BeInRange(0, 1).And.BeOneOf(1, 2, 3).And.BeLessThan(2);
+
+var date = DateTime.Parse("2016-05-28");
+date.Should().HaveYear(2016).And.BeAfter(1.May(2016)).And.BeBefore(1.June(2016));
+
+var flag = true;
+flag.Should().BeTrue();
+
+var s = "hello world";
+s.Should().NotBeNullOrWhiteSpace().And.HaveLength(11).And.StartWith("h").And.Contain("ll").And.EndWith("d");
+
+var collection = new[] { 1, 2, 3, 4, 5 };
+collection.Should().NotBeNullOrEmpty().And.HaveCount(5).And.Contain(1).And.BeInAscendingOrder().And.OnlyHaveUniqueItems();

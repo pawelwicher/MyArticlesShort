@@ -1,0 +1,31 @@
+﻿Uruchamiamy następujący kod w konsoli PS:
+
+$r = [regex] '\d\d:\d\d:\d\d';
+$s = $r.Match((net stats workstation)[3]).Groups[0].Value;
+$d = [DateTime]::Parse($s);
+cls;
+"start at: " + $s;
+"time left: " + ([TimeSpan]::FromHours(8) - ([DateTime]::Now - $d)).ToString();
+
+Wynik (oczywiście zawsze będzie inny):
+
+start at: 17:27:59
+time left: 05:48:13.1821564
+
+Skrypt łączy polecenia ze standardowego wiersza poleceń z możliwościami PowerShella czyli korzystaniem z obiektów .NET.
+
+W klasycznej konsoli wszystko co otrzymywaliśmy jako rezultat wykonywania komend było tekstem.
+
+W PS zawsze zwracany jest obiekt .NET.
+
+Polecenie "net stats workstation" wykonane w PS daje w wyniku obiekt typu System.Array,
+dzięki czemu mamy łatwiejszy dostęp do poszczególnych wierszy jakie zwaraca komenda.
+
+PS> (net stats workstation).GetType()
+
+IsPublic IsSerial Name                                     BaseType
+-------- -------- ----                                     --------
+True     True     Object[]                                 System.Array
+
+W tym przykładzie z "net stats workstation" wyciągam przybliżony czas uruchomienia komputera
+oraz wykonuję proste operacje na typach DateTime i TimeSpan.

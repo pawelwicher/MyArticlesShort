@@ -1,0 +1,29 @@
+﻿W PS możemy wykonać dowolny kod .NET.
+Jeżeli nie podoba nam się skryptowy sposób kodowania możemy użyć czystego .NET.
+
+Cały kod opakowujemy własnym typem - klasą statyczną z publiczną statyczną metodą.
+
+Jedynym elementem typowo PowerShellowym jest cmdlet Add-Type,
+który rejestruje nasz typ na czas bieżącej sesji PS (do czasu zamknięcia konsoli).
+
+Na końcu wywołujemy metodę "Hello" klasy "Foo" za pomocą operatora "::"
+
+$source = '
+using System;
+namespace Foo
+{    
+    public static class Bar
+    {
+        public static string Hello()
+        {
+            return string.Format("Hello World at {0:HH:mm}", DateTime.Now);
+        }
+    }        
+}'
+Add-Type $source
+cls
+[Foo.Bar]::Hello()
+
+Wynik:
+
+Hello World at 20:34

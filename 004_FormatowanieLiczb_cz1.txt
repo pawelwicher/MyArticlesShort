@@ -1,0 +1,31 @@
+﻿Jak działa string.Format wszyscy wiemy.
+
+var a = 123;
+Console.WriteLine(string.Format("a = {0}", a));
+// a = 123
+
+lub w stylu C# 6.0
+
+var b = 456;
+Console.WriteLine($"b = {b}");
+// b = 456
+
+Liczbę możemy wyświetlić w różnych formatach
+
+var number = 48531005887;
+
+Console.WriteLine($"Format walutowy: {number:C}");
+// Format walutowy: 48 531 005 887,00 zł
+
+Console.WriteLine($"Format szestnaskowy: {number:X}");
+// Format szestnaskowy: B4CAC61BF
+
+Mamy jeszcze specjalne znaki '0' i '#',
+które pozwalają na ustawianie cyfr formatowej liczby w konkretnym miejscu
+
+Na przykład:
+
+Console.WriteLine($"+{number:(##) ### ### ###}");
+// +(48) 531 005 887
+
+i dostajemy ładnie sformatowy numer telefonu (mój numer :P).

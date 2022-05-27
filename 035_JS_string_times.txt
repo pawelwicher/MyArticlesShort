@@ -1,0 +1,9 @@
+﻿Funkcja 'times' w Javascript:
+
+// Wykorzystanie triku z konstruktorem jednoargumentowym obiektu Array
+
+String.prototype.times = function(n) { return new Array(n + 1).join(this); }
+
+'hello '.times(5)
+
+// "hello hello hello hello hello "

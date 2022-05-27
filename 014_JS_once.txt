@@ -1,0 +1,32 @@
+﻿Przykład pokazuje w jaki sposób stworzych funkcję,
+którą bedzie można wywołać tylko raz.
+
+Tworzymy metodę fabrykującą funkcje jednokrotnego wywołania:
+
+function makeOnceCallFunction(fn) {
+  return function() {
+    if(fn !== null) {
+      var f = fn;
+      fn = null;
+      return f.apply(this, arguments);
+    }
+  };
+}
+
+
+Tworzymy metodę do testów (z dowolną ilością parametrów):
+
+function hello(name) {
+  return 'Hello ' + name;
+}
+
+
+Za pomocą 'makeOnceCallFunction' tworzymy funkcję 'helloOnlyOnce' i wywołujemy dwukrotnie:
+
+var helloOnlyOnce = makeOnceCallFunction(hello);
+
+helloOnlyOnce('Bob');
+// "Hello Bob"
+
+helloOnlyOnce('Bob');
+// undefined

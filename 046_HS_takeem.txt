@@ -1,0 +1,20 @@
+﻿takeem :: Int -> [a] -> [a]
+takeem 1 (x: _) = [x]
+takeem m (x:xs) = x : takeem (m - 1) xs
+
+repeatem :: a -> [a]
+repeatem x = xs where xs = x : xs
+
+replicateem :: Int -> a -> [a]
+replicateem n x =  takeem n (repeatem x)
+
+main = do
+    print $ takeem 3 [1,1,1,1,1]
+    print $ takeem 4 $ repeatem 1
+    print $ replicateem 5 1
+
+{- 
+[1,1,1]
+[1,1,1,1]
+[1,1,1,1,1]
+-}

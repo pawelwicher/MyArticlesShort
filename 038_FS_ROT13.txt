@@ -1,0 +1,9 @@
+﻿let abc = ['a'; 'b'; 'c'; 'd'; 'e'; 'f'; 'g'; 'h'; 'i'; 'j'; 'k'; 'l'; 'm'; 'n'; 'o'; 'p'; 'q'; 'r'; 's'; 't'; 'u'; 'v'; 'w'; 'x'; 'y'; 'z']
+        
+let rot13 s = s |> String.map(fun c -> match abc |> List.tryFindIndex(fun x -> x = c) with | Some(i) -> abc.[(i + 13) % 26] | None -> c)
+
+printfn "%s" (rot13 "hello world")
+printfn "%s" (rot13 "uryyb jbeyq")
+
+// uryyb jbeyq
+// hello world

@@ -1,0 +1,37 @@
+﻿Załóżmy, że chcemy za pomocą naszej funkcji 'concat' osiągnąć następujący efekt:
+
+concat("Hello")("World")("!")
+
+Oczywiście spodziewamy się wyniku:
+"Hello World !"
+
+Ten sam efekt uzyskamy także tworząc prostszy i bardziej intuicyjny kod, na przykład:
+poprzez przekazanie tablicy napisów jako parametru lub wykorzystanie tablicy 'arguments'
+
+W tym przykładzie będzie to zrobione inaczej (Javascript pokaże swoje fajne cechy i elastyczność) 
+
+function concat(str) {
+  var concatstr = str;
+  var f = function(s) {
+    concatstr += concatstr === '' ? s : ' ' + s;
+    return f;
+  };
+  f.valueOf = function() { return concatstr; }
+  return f;
+}
+
+Wywołanie i wynik:
+
+concat("Hello")("World")("!")
+function Hello World !
+
+
+Wynik jest nieco inny niż oczekiwany - 'concat' zwraca funkcje a nie napis, załatwi to rzutowanie:
+
+typeof concat("Hello")("World")("!")
+"function"
+
+concat("Hello")("World")("!") + ""
+"Hello World !"
+
+

@@ -1,0 +1,10 @@
+﻿Object.valueOf jest wywoływane gdy zachodzi potrzeba konwersji
+obiektu na typ prosty (primitive value), na przykład podczas porównywania wartości.
+
+var a = 0;
+console.log(a == 0 && a == 1);
+// false
+
+var a = { i: 0, valueOf: function() { return a.i++; } };
+console.log(a == 0 && a == 1);
+// true

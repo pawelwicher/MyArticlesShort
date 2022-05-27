@@ -1,0 +1,46 @@
+﻿// Definicja
+public class JSEvaluator
+{
+    private const string source = @"
+	package JSEvaluator 
+	{ 
+		class JSEvaluator 
+		{
+			public function Eval(expr : String) : String 
+			{ 
+				try { return eval(expr); } catch(e) { return e.toString(); }
+			} 
+		}
+	}";
+    private CompilerResults compilerResults;
+    private Type evaluatorType;
+    private Object evaluator;
+
+    public JSEvaluator()
+    {
+        compilerResults = CodeDomProvider.CreateProvider("JScript").CompileAssemblyFromSource(
+		  new CompilerParameters() { GenerateInMemory = true  , show = false }, source);
+        evaluatorType = compilerResults.CompiledAssembly.GetType("JSEvaluator.JSEvaluator");
+        evaluator = Activator.CreateInstance(evaluatorType);
+    }
+
+    public string Eval(string expr)
+    {
+        return evaluatorType.InvokeMember("Eval", BindingFlags.InvokeMethod, null, evaluator, new object[] { expr }).ToString();
+    }
+}
+
+// Przykład użycia
+var evaluator = new JSEvaluator();
+
+Console.WriteLine(evaluator.Eval("1"));
+Console.WriteLine(evaluator.Eval("1+1"));
+Console.WriteLine(evaluator.Eval("'abc'.length"));
+Console.WriteLine(evaluator.Eval("parseInt('100', 2)"));
+Console.WriteLine(evaluator.Eval("Math.sqrt(25)"));
+
+// 1
+// 2
+// 3
+// 4
+// 5

@@ -1,0 +1,84 @@
+﻿Do połączenia się z baza MongoDB z poziomu .NET
+potrzebny jest sterownik 'MongoDB C# Driver'.
+Dołączamy go do projektu korzystając z NuGet.
+Pobrane zostaną 3 dll'ki:
+MongoDB.Bson.dll, MongoDB.Driver.dll, MongoDB.Driver.Core.dll
+
+Tworzę 3 metody: MongoDBCleanup, MongoDBInsertData oraz MongoDBFindData
+
+W metodzie MongoDBCleanup dropuje bazę 'mydb'.
+Używałem tej bazy w poprzednich przykładach.
+Teraz zrobimy wszystko od początku:
+ - założymy bazę
+ - utworzymy przykładową kolekcję
+ - wstawimy dokumenty do kolekcji
+ - wykonamy kilka zapytań z wykorzystaniem 'MongoDB.Driver'
+
+Wywołuję MongoDBCleanup.
+
+Wynik:
+
+{ "name" : "local", "sizeOnDisk" : 73728.0, "empty" : false }
+{ "name" : "mydb", "sizeOnDisk" : 8192.0, "empty" : false }
+DropDatabase
+{ "name" : "local", "sizeOnDisk" : 73728.0, "empty" : false }
+
+
+Wywołuje MongoDBInsertData, w której tworzę kolekcję 'cars'
+a następnie wstawiam do niej 3 dokumenty.
+
+Kluczowym obiektem, zarówno przy wstawianiu danych jak i pobieraniu
+jest 'BsonDocument'. Dane wstawiane i odczywywane to obiekty lub listy
+klasy 'BsonDocument'. W metodzie 'Find' 'BsonDocument' służy jako
+klauzula ograniczająca zbiór wynikowy.
+Do ograniczania wyników przydaje się helper 'Builders'.
+Dostęp do atrybutów dokumentu odbywa się poprzez indekser.
+
+Wywołuję MongoDBFindData.
+
+Wynik:
+
+{ "_id" : ObjectId("56ed8084b6fbf91d88ac731c"), "mark" : "Fiat", "model" : "500L", "year" : 2015 }
+{ "_id" : ObjectId("56ed8085b6fbf91d88ac731d"), "mark" : "Renault", "model" : "Clio", "year" : 2010, "engine" : "1.4 16V 98KM" }
+{ "_id" : ObjectId("56ed8085b6fbf91d88ac731e"), "mark" : "Skoda", "model" : "Fabia", "year" : 2008 }
+500L
+Clio
+Fabia
+{ "_id" : ObjectId("56ed8085b6fbf91d88ac731e"), "mark" : "Skoda", "model" : "Fabia", "year" : 2008 }
+{ "_id" : ObjectId("56ed8085b6fbf91d88ac731e"), "mark" : "Skoda", "model" : "Fabia", "year" : 2008 }
+{ "_id" : ObjectId("56ed8084b6fbf91d88ac731c"), "mark" : "Fiat", "model" : "500L", "year" : 2015 }
+{ "_id" : ObjectId("56ed8085b6fbf91d88ac731d"), "mark" : "Renault", "model" : "Clio", "year" : 2010, "engine" : "1.4 16V 98KM" }
+
+Kod:
+
+private static void MongoDBFindData()
+{
+    var client = new MongoClient();
+    var db = client.GetDatabase("mydb");
+    var cars = db.GetCollection&lt;BsonDocument&gt;("cars");
+
+    cars.Find&lt;BsonDocument&gt;(new BsonDocument()).ToList().ForEach(m =&gt; Console.WriteLine(m));
+    cars.Find&lt;BsonDocument&gt;(new BsonDocument()).ToList().ForEach(m =&gt; Console.WriteLine(m["model"]));
+    cars.Find&lt;BsonDocument&gt;(new BsonDocument() { { "mark", "Skoda" } }).ToList().ForEach(m =&gt; Console.WriteLine(m));
+    cars.Find&lt;BsonDocument&gt;(Builders&lt;BsonDocument&gt;.Filter.Eq("mark", "Skoda")).ToList().ForEach(m =&gt; Console.WriteLine(m));
+    cars.Find&lt;BsonDocument&gt;(Builders&lt;BsonDocument&gt;.Filter.Gte("year", 2010)).ToList().ForEach(m =&gt; Console.WriteLine(m));
+}
+private static void MongoDBInsertData()
+{
+    var client = new MongoClient();
+    var db = client.GetDatabase("mydb");
+
+    var cars = db.GetCollection&lt;BsonDocument&gt;("cars");
+    cars.InsertOne(new BsonDocument() { { "mark", "Fiat"  , show = false }, { "model", "500L"  , show = false }, { "year", 2015 } });
+    cars.InsertOne(new BsonDocument() { { "mark", "Renault"  , show = false }, { "model", "Clio"  , show = false }, { "year", 2010  , show = false }, { "engine", "1.4 16V 98KM" } });
+    cars.InsertOne(new BsonDocument() { { "mark", "Skoda"  , show = false }, { "model", "Fabia"  , show = false }, { "year", 2008 } });
+}
+private static void MongoDBCleanup()
+{
+    var client = new MongoClient();
+
+    client.ListDatabases().ToList().ForEach(m =&gt; Console.WriteLine(m));
+    Console.WriteLine("DropDatabase");
+    client.DropDatabase("mydb");
+    client.ListDatabases().ToList().ForEach(m =&gt; Console.WriteLine(m));
+}

@@ -1,0 +1,42 @@
+﻿Przykład prostej aplikacji webowej, opartej o technologię OWIN.
+
+W tym przykładzie będzie ona hostowana w procesie aplikacji konsolowej.
+
+Potrzebne będą komponenty (sciągamy z nugeta):
+- Owin
+- Microsoft.Owin.SelfHost
+
+// Wskazujemy klasę startową dla OWIN
+[assembly: OwinStartup(typeof(OwinSample.Startup))]
+
+namespace OwinSample
+{
+	// Klasa aplikacji webowej
+	public class Startup
+	{
+		public void Configuration(IAppBuilder app)
+		{
+			app.Run(context =>
+			{
+				context.Response.ContentType = "text/plain";
+				return context.Response.WriteAsync("Hello World");
+			});
+		}
+	}
+
+	// Program konsolowy
+	public static class Program
+	{
+		[STAThread]
+		public static void Main(string[] args)
+		{
+			var url = @"http://localhost:9000";
+
+			using (WebApp.Start<Startup>(url))
+			{
+				Console.WriteLine($"Server started at {url}");
+				Console.ReadKey();
+			}
+		}
+	}
+}

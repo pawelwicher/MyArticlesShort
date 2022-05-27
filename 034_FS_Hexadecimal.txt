@@ -1,0 +1,63 @@
+﻿Zamiana liczby szesnastkowej na dziesiętną
+
+// testy
+module HexadecimalTests =
+
+    open NUnit.Framework
+    open Hexadecimal
+
+    [<TestCase(0, ExpectedResult = 1)>]
+    [<TestCase(1, ExpectedResult = 16)>]
+    [<TestCase(2, ExpectedResult = 256)>]
+    let ``Test function 'powOf16'`` n =
+        powOf16 n 
+
+    [<TestCase("1", ExpectedResult = 1)>]
+    [<TestCase("c", ExpectedResult = 12)>]
+    [<TestCase("10", ExpectedResult = 16)>]
+    [<TestCase("af", ExpectedResult = 175)>]
+    [<TestCase("100", ExpectedResult = 256)>]
+    [<TestCase("19ace", ExpectedResult = 105166)>]
+    [<TestCase("19ace", ExpectedResult = 105166)>]
+    [<TestCase("000000", ExpectedResult = 0)>]
+    [<TestCase("ffffff", ExpectedResult = 16777215)>]
+    [<TestCase("ffff00", ExpectedResult = 16776960)>]
+    let ``Hexadecimal_converts_to_decimal`` hexadecimal =
+        toDecimal hexadecimal
+    
+    [<Test>]
+    let ``Invalid_hexadecimal_is_decimal_0`` () =
+        Assert.That(toDecimal "carrot", Is.EqualTo(0))
+
+// kod
+module Hexadecimal =
+
+    let rec powOf16 n = if n = 0 then 1 else powOf16(n - 1) * 16
+
+    let toDigit (hex : char) =
+        match hex with
+        | '0' -> 0
+        | '1' -> 1
+        | '2' -> 2
+        | '3' -> 3
+        | '4' -> 4
+        | '5' -> 5
+        | '6' -> 6
+        | '7' -> 7
+        | '8' -> 8
+        | '9' -> 9
+        | 'a' -> 10
+        | 'b' -> 11
+        | 'c' -> 12
+        | 'd' -> 13
+        | 'e' -> 14
+        | 'f' -> 15
+        |  _  -> -1
+
+    let validateHexNumberString (s : string) =
+        (s.ToCharArray() |> Array.map(fun x -> toDigit x) |> Array.filter (fun x -> x = -1)).Length
+
+    let toDecimal (s : string) =
+        match validateHexNumberString s with
+        | 0 -> s.ToCharArray() |> List.ofArray |> List.rev |> List.mapi(fun i x -> toDigit x * powOf16 i) |> List.sum
+        | _ -> 0

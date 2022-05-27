@@ -1,0 +1,111 @@
+﻿Dzięki tabeli systemowej sys.syscomments możliwe jest wyszukiwanie po konkretnych frazach użytych w kodzie
+lub znajdowanie definicji konkretnych procedur (gdy znamy ich nazwę).
+
+Na potrzeby przykładów tworzymy dwie proste funkcje:
+
+go
+
+create function [SumaKwadratow](@a int, @b int)
+returns int
+as
+begin
+
+declare @aa int = @a * @a
+declare @bb int = @b * @b
+declare @suma int = @aa + @bb
+
+return @suma
+
+end
+
+go
+
+create function [SumaSzescianow](@a int, @b int)
+returns int
+as
+begin
+
+-- created 2016-03-03
+
+declare @aaa int = @a * @a * @a
+declare @bbb int = @b * @b * @b
+declare @suma int = @aaa + @bbb
+
+return @suma
+
+end
+
+
+Przykład 1 - wyszukiwanie ciała funkcji:
+
+go
+
+declare
+@objectId int,
+@text varchar(max)
+
+select @objectId = object_id from sys.objects where name = 'SumaKwadratow'
+select @text = text from sys.syscomments where id = @objectId
+
+print @text
+</code>
+
+Wynik to oczywiście ciało funkcji SumaKwadratow:
+
+CREATE function [SumaKwadratow](@a int, @b int)
+returns int
+as
+begin
+
+-- created 2016-03-03
+
+declare @aa int = @a * @a
+declare @bb int = @b * @b
+declare @suma int = @aa + @bb
+
+return @suma
+
+end
+
+
+Przykład 2 - wyszukiwanie po zawartości kodu
+
+W przykładzie 1 znaliśmy dokładną nazwę obiektu, którego definicję chcieliśmy wyszukać.
+Teraz szukamy obiektów, których definicja posiada charakterystyczny fragment - komentarz z datą utworzenia:
+
+go
+
+declare @text varchar(max) = ''
+
+select @text = @text + char(13) + '-------------' + char(13) + text from sys.syscomments where text like '%created 2016-03-03%'
+
+print @text
+
+Wynik:
+-------------CREATE function [SumaKwadratow](@a int, @b int)
+returns int
+as
+begin
+
+-- created 2016-03-03
+
+declare @aa int = @a * @a
+declare @bb int = @b * @b
+declare @suma int = @aa + @bb
+
+return @suma
+
+end-------------create function [SumaSzescianow](@a int, @b int)
+returns int
+as
+begin
+
+-- created 2016-03-03
+
+declare @aaa int = @a * @a * @a
+declare @bbb int = @b * @b * @b
+declare @suma int = @aaa + @bbb
+
+return @suma
+
+end

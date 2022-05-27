@@ -1,0 +1,14 @@
+﻿Spread operator to kolejna nowość EC6.
+
+[...'spread']
+// ["s", "p", "r", "e", "a", "d"]
+
+[...[1,2,3]]
+// [1, 2, 3]
+
+[1,2,3,...[4,5],6,7]
+// [1, 2, 3, 4, 5, 6, 7]
+
+function sum(a, b, c) { return a + b + c; }
+sum(...[2,4,6])
+// 12

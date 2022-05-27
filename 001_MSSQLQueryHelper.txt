@@ -1,0 +1,70 @@
+﻿public class MSSQLQueryHelper
+{
+    public string ConnectionString { get; set; }
+    public List<T> Query<T>(string cmdText, T type)
+    {
+        var list = new List<T>();
+        using (var connection = new SqlConnection(ConnectionString))
+        {
+            connection.Open();
+            using (var command = new SqlCommand(cmdText, connection) { CommandType = CommandType.Text })
+            {
+                var reader = command.ExecuteReader();
+                var t = type.GetType();
+                var constructorInfo_array = t.GetConstructors();
+                var parameterInfo_array = constructorInfo_array[0].GetParameters();
+                var propertyInfo_array = t.GetProperties();
+                var parameters = new object[propertyInfo_array.Length];
+                var schemaTable = reader.GetSchemaTable();
+                var columns = new List<string>();
+                var t_object = default(T);
+                foreach (DataRow row in schemaTable.Rows)
+                {
+                    columns.Add(row["ColumnName"].ToString());
+                }
+                while (reader.Read())
+                {
+                    for (int i = 0; i < propertyInfo_array.Length; i++)
+                    {
+                        if (columns.Contains(propertyInfo_array[i].Name))
+                        {
+                            parameters[i] = reader[propertyInfo_array[i].Name];
+                        }
+                    }
+                    t_object = (T)(constructorInfo_array[0].Invoke(parameters));
+                    list.Add(t_object);
+                }
+            }
+            connection.Close();
+            return list;
+        }
+    }
+}
+
+Działa to tak:
+
+var db = new MSSQLQueryHelper() { ConnectionString = @"Server=SQLEXPRESS;Database=northwind;Trusted_Connection=True;" };
+
+db.Query(@"select 1 + 2 Result", new { Result = 0 }).
+ForEach(m => Debug.WriteLine(m));
+
+db.Query(@"select DB_NAME() DBName", new { DBName = "" }).
+ForEach(m => Debug.WriteLine(m));
+
+db.Query(@"select top 10 ProductID, ProductName from Products order by ProductID", new { ProductID = 0, ProductName = "" }).
+ForEach(m => Debug.WriteLine(m));
+
+Wyniki:
+
+{ Result = 3 }
+{ DBName = northwind }
+{ ProductID = 1, ProductName = Chai }
+{ ProductID = 2, ProductName = Chang }
+{ ProductID = 3, ProductName = Aniseed Syrup }
+{ ProductID = 4, ProductName = Chef Anton's Cajun Seasoning }
+{ ProductID = 5, ProductName = Chef Anton's Gumbo Mix }
+{ ProductID = 6, ProductName = Grandma's Boysenberry Spread }
+{ ProductID = 7, ProductName = Uncle Bob's Organic Dried Pears }
+{ ProductID = 8, ProductName = Northwoods Cranberry Sauce }
+{ ProductID = 9, ProductName = Mishi Kobe Niku }
+{ ProductID = 10, ProductName = Ikura }

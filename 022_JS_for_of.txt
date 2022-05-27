@@ -1,0 +1,10 @@
+﻿Ten rodzaj pętli to nowość w Javascript 2015 (EC6)
+Pozwala na wygodniejsze iterowanie po tablicach.
+
+var a = [3,4,5];
+
+for(var i = 0; i < a.length; i++) console.log(a[i]);
+
+for(var p in a) console.log(a[p]);
+
+for(var n of a) console.log(n);

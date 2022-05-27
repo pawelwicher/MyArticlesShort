@@ -1,0 +1,54 @@
+﻿Przykład prostej aplikacji webowej z wykorzystaniem OWIN i Nancy.
+
+Nancy to framework wspierający budowę aplikcji opratych o OWIN.
+
+Potrzebne będą komponenty (sciągamy z nugeta):
+- Nancy
+- Nancy.Owin
+- komponenty użyte w poprzednim przykładzie ('OWIN - Hello World')
+
+// Wskazujemy klasę startową dla OWIN
+[assembly: OwinStartup(typeof(OwinSample.Startup))]
+
+namespace OwinSample
+{
+	// Klasa startowa
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+            app.UseNancy();
+        }
+    }
+
+	// Aplikacja Nancy
+	// NancyModule to coś w stylu kontrolera,
+	// aby aplikacja robiła coś bardzie sensownego możemy odwołać się do 'View'
+	// 
+	//    Get["/"] = _ => View["home"];
+	//
+	// to polecenie sprawi, że Nancy sięgnie po plik 'home.html' z katalogu 'Views'
+    public class SampleModule : NancyModule
+    {
+        public SampleModule()
+        {
+            Get["/"] = _ => "Nancy says: Hello World";			
+        }
+    }
+
+	// Program konsolowy
+	public static class Program
+	{
+		[STAThread]
+		public static void Main(string[] args)
+		{
+			var url = @"http://localhost:9000";
+
+			using (WebApp.Start<Startup>(url))
+			{
+				Console.WriteLine($"Server started at {url}");
+				Console.ReadKey();
+			}
+		}
+	}
+}

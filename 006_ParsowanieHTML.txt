@@ -1,0 +1,44 @@
+﻿HtmlAgilityPack umożliwia dostęp do elemntów DOM na podobnej zasadzie jak Linq to XML
+
+Przykład (parsowanie html ze strony z programem tv):
+
+var stacja = "Eurosport-2";
+var url = $@"http://www.teleman.pl/program-tv/stacje/{stacja}?hour=16";
+var html = "";
+
+using (var client = new WebClient() { Encoding = Encoding.UTF8 })
+{
+    html = client.DownloadString(url);
+}
+
+var htmlDocument = new HtmlDocument();
+
+htmlDocument.LoadHtml(html);
+
+(from node in (from node in htmlDocument.DocumentNode.Descendants()
+                where node.Attributes["class"] != null && node.Attributes["class"].Value == "stationItems"
+                select node).First().ChildNodes
+    where node.Id.Contains("prog")
+    select new
+    {
+        Godzina = (from element in node.Descendants() where element.Name == "em" select element).First().InnerText,
+        Nazwa = (from element in node.Descendants() where element.Name == "a" select element).Last().InnerText,
+        Opis = (from element in node.Descendants() where element.Name == "p" select element).First().InnerText
+    }).Take(5).ToList().ForEach(item => Debug.WriteLine($"[{item.Godzina}] {item.Nazwa}\n{item.Opis}\n"));
+
+Wynik:
+
+[15:30] Piłka nożna: Liga niemiecka
+mecz: Bayern Monachium - SV Darmstadt 98
+
+[17:30] W przerwie
+magazyn piłkarski
+
+[18:30] Narciarstwo dowolne
+narciarstwo dowolne
+
+[19:30] Narciarstwo dowolne: Zawody Pucharu Świata w Mińsku
+narciarstwo dowolne
+
+[20:30] Wiadomości Eurosportu
+magazyn informacyjny

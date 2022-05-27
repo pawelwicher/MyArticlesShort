@@ -1,0 +1,11 @@
+﻿module PrimeNumbers where
+
+isPrime :: Int -> Bool
+isPrime n = length [x | x <- [2 .. n], n `mod` x == 0] == 1
+
+getPrimes :: Int -> [Int]
+getPrimes n = take n [x | x <- [2..], isPrime x]
+
+
+getPrimes 10
+[2,3,5,7,11,13,17,19,23,29]

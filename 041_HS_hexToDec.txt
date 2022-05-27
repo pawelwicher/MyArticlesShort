@@ -1,0 +1,25 @@
+﻿module HexToDecimal where
+
+hexCharToDec :: Char -> Int
+hexCharToDec '0' = 0
+hexCharToDec '1' = 1
+hexCharToDec '2' = 2
+hexCharToDec '3' = 3
+hexCharToDec '4' = 4
+hexCharToDec '5' = 5
+hexCharToDec '6' = 6
+hexCharToDec '7' = 7
+hexCharToDec '8' = 8
+hexCharToDec '9' = 9
+hexCharToDec 'a' = 10
+hexCharToDec 'b' = 11
+hexCharToDec 'c' = 12
+hexCharToDec 'd' = 13
+hexCharToDec 'e' = 14
+hexCharToDec 'f' = 15
+
+hexToDec :: String -> Int
+hexToDec s = sum [hexCharToDec a * 16 ^ b | (a,b) <- zip s [length s - 1, length s - 2..0]]
+
+hexToDec "ff"
+255

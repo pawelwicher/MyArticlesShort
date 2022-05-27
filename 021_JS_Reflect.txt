@@ -1,0 +1,16 @@
+﻿Reflect to nowość w Javascript 2015 (EC6)
+Jest to obiekt wbudowany, dostępny m.in. w Chrome od wersji 49 i Firefox od wersji 42
+
+Za pomocą Reflect możemy wylistować propercje obiektu w łatwiejszy niż dotąd sposób.
+Dodatkowo otrzymana lista jest zawężona to propercji instancji, nie dziedziczonych,
+czyli takich gdzie hasOwnProperty zwraca true.
+
+var foo = { id: 1, name: 'foo' };
+var props = [];
+for(p in foo) props.push(p);
+props
+// ["id", "name"]
+
+// Z użyciem Reflect
+Reflect.ownKeys(foo);
+// ["id", "name"]

@@ -1,0 +1,45 @@
+﻿let list = [1; 2; 1; 3; 5; 4; 6; 7]
+
+printfn "%A" (list |> List.rev)
+printfn "%A" (list |> List.distinct)
+printfn "%A" (list |> List.sort)
+printfn "%A" (list |> List.sortDescending)
+printfn "%A" (list |> List.sum)
+printfn "%A" (list |> List.min)
+printfn "%A" (list |> List.max)
+printfn "%A" (list |> List.toArray)
+printfn "%A" (list |> List.toArray |> List.ofArray)
+printfn "%A" (list |> List.append [8; 9])
+printfn "%A" (list |> List.contains 5)
+printfn "%A" (list |> List.exists(fun x -> x = 3))
+printfn "%A" (list |> List.forall(fun x -> x < 8))
+printfn "%A" (list |> List.find(fun x -> x = 1))
+printfn "%A" (list |> List.findIndex(fun x -> x = 5))
+printfn "%A" (list |> List.filter(fun x -> x = 1))
+printfn "%A" (list |> List.map(fun x -> x + 1))
+printfn "%A" (list |> List.mapi(fun i x -> (i, x)))
+printfn "%A" (list |> List.reduce(fun acc x -> acc + x * x))
+printfn "%A" (list |> List.fold(fun acc x -> acc + x * x) -100)
+printfn "%A" (list |> List.chunkBySize(3))
+
+// [7; 6; 4; 5; 3; 1; 2; 1]
+// [1; 2; 3; 5; 4; 6; 7]
+// [1; 1; 2; 3; 4; 5; 6; 7]
+// [7; 6; 5; 4; 3; 2; 1; 1]
+// 29
+// 1
+// 7
+// [|1; 2; 1; 3; 5; 4; 6; 7|]
+// [1; 2; 1; 3; 5; 4; 6; 7]
+// [8; 9; 1; 2; 1; 3; 5; 4; 6; 7]
+// true
+// true
+// true
+// 1
+// 4
+// [1; 1]
+// [2; 3; 2; 4; 6; 5; 7; 8]
+// [(0, 1); (1, 2); (2, 1); (3, 3); (4, 5); (5, 4); (6, 6); (7, 7)]
+// 141
+// 41
+// [[1; 2; 1]; [3; 5; 4]; [6; 7]]

@@ -1,0 +1,56 @@
+﻿using ProtoBuf;
+using System.IO;
+using System.IO.Compression;
+
+namespace Debug
+{
+    public static class BytesHelper
+    {
+        private const int BufferSize = 65536;
+
+        private static byte[] ToBytes<T>(T obj, bool compress = true) where T : class
+        {
+            if (compress)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    using (var deflateStream = new DeflateStream(memoryStream, CompressionMode.Compress))
+                    {
+                        using (var bufferedStream = new BufferedStream(gzipStream, BufferSize))
+                        {
+                            Serializer.Serialize(bufferedStream, obj);
+                        }
+                    }
+                    return memoryStream.ToArray();
+                }
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                Serializer.Serialize(memoryStream, obj);
+                return memoryStream.ToArray();
+            }
+        }
+        private static T FromBytes<T>(byte[] bytes, bool decompress = true) where T : class
+        {
+            if (decompress)
+            {
+                using (var memoryStream = new MemoryStream(bytes))
+                {
+                    using (var deflateStream = new DeflateStream(memoryStream, CompressionMode.Decompress))
+                    {
+                        using (var bufferedStream = new BufferedStream(gzipStream, BufferSize))
+                        {
+                            return Serializer.Deserialize<T>(bufferedStream);
+                        }
+                    }
+                }
+            }
+
+            using (var memoryStream = new MemoryStream(bytes))
+            {
+                return Serializer.Deserialize<T>(memoryStream);
+            }
+        }
+    }
+}

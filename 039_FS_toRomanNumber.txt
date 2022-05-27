@@ -1,0 +1,81 @@
+﻿module RomanNumeralTests =
+
+    open NUnit.Framework
+    open RomanNumeral
+    
+    [<TestCase(0, ExpectedResult = "")>]
+    [<TestCase(1, ExpectedResult = "I")>]
+    [<TestCase(2, ExpectedResult = "II")>]
+    [<TestCase(3, ExpectedResult = "III")>]
+    [<TestCase(4, ExpectedResult = "IV")>]
+    [<TestCase(5, ExpectedResult = "V")>]
+    [<TestCase(6, ExpectedResult = "VI")>]
+    [<TestCase(9, ExpectedResult = "IX")>]
+    [<TestCase(27, ExpectedResult = "XXVII")>]
+    [<TestCase(48, ExpectedResult = "XLVIII")>]
+    [<TestCase(59, ExpectedResult = "LIX")>]
+    [<TestCase(93, ExpectedResult = "XCIII")>]
+    [<TestCase(141, ExpectedResult = "CXLI")>]
+    [<TestCase(163, ExpectedResult = "CLXIII")>]
+    [<TestCase(402, ExpectedResult = "CDII")>]
+    [<TestCase(575, ExpectedResult = "DLXXV")>]
+    [<TestCase(911, ExpectedResult = "CMXI")>]
+    [<TestCase(1024, ExpectedResult = "MXXIV")>]
+    [<TestCase(1984, ExpectedResult = "MCMLXXXIV")>]
+    [<TestCase(1999, ExpectedResult = "MCMXCIX")>]        
+    [<TestCase(3000, ExpectedResult = "MMM")>]
+    let ``Convert roman to arabic numerals`` n =
+        toRomanNumber n
+
+module RomanNumeral =
+
+    let get1000s x =
+        match x with
+        | 0 -> ""
+        | n -> String.init n (fun i -> "M")
+
+    let get100s x =
+        match x with
+        | 1 -> "C"
+        | 2 -> "CC"
+        | 3 -> "CCC"
+        | 4 -> "CD"
+        | 5 -> "D"
+        | 6 -> "DC"
+        | 7 -> "DCC"
+        | 8 -> "DCCC"
+        | 9 -> "CM"
+        | _ -> ""
+
+    let get10s x =
+        match x with
+        | 1 -> "X"
+        | 2 -> "XX"
+        | 3 -> "XXX"
+        | 4 -> "XL"
+        | 5 -> "L"
+        | 6 -> "LX"
+        | 7 -> "LXX"
+        | 8 -> "LXXX"
+        | 9 -> "XC"
+        | _ -> ""
+
+    let get1s x =
+        match x with
+        | 1 -> "I"
+        | 2 -> "II"
+        | 3 -> "III"
+        | 4 -> "IV"
+        | 5 -> "V"
+        | 6 -> "VI"
+        | 7 -> "VII"
+        | 8 -> "VIII"
+        | 9 -> "IX"
+        | _ -> ""
+
+    let toRomanNumber n =
+        let n1000s = (n / 1000)
+        let n100s  = (n - n1000s * 1000) / 100
+        let n10s   = (n - n1000s * 1000 - n100s * 100) / 10
+        let n1s    = (n - n1000s * 1000 - n100s * 100 - n10s * 10)
+        get1000s n1000s + get100s n100s + get10s n10s + get1s n1s

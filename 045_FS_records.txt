@@ -1,0 +1,19 @@
+﻿type Person = { FirstName : string; LastName : string }
+
+let jj = { FirstName = "Jessica"; LastName = "Jones" }
+printfn "%A" jj
+
+let { FirstName = firstName } = jj
+let { LastName = lastName } = jj
+printfn "%s" firstName
+printfn "%s" lastName
+
+let jsj = { jj with LastName = "Super" + jj.LastName }
+printfn "%A" jsj
+
+// { FirstName = "Jessica";
+//   LastName = "Jones"; }
+// Jessica
+// Jones
+// { FirstName = "Jessica";
+//   LastName = "SuperJones"; }

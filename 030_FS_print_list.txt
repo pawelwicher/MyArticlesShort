@@ -1,0 +1,6 @@
+﻿let rec print list = 
+    match list with
+    | [] -> ()
+    | head::rest -> head |> printfn "%O"; print(rest)
+
+print ["3"; "2"; "1"; "Hello"; "World"]

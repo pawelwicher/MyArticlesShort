@@ -1,0 +1,103 @@
+﻿Pig Latin - klasyczne zadanie programistyczne wykonane w F#
+
+// testy
+module PigLatinTests =
+
+    open NUnit.Framework
+    open PigLatin
+
+    [<Test>]
+    let ``Test function 'stringToCharList'`` () = Assert.That(stringToCharList "apple", Is.EqualTo(['a'; 'p'; 'p'; 'l'; 'e']))
+
+    [<Test>]
+    let ``Test function 'charListToString'`` () = Assert.That(charListToString ['a'; 'p'; 'p'; 'l'; 'e'], Is.EqualTo("apple"))
+
+    [<Test>]
+    let ``Test function 'phraseToWords'`` () = Assert.That(phraseToWords "quick fast run", Is.EqualTo(["quick"; "fast"; "run"]))
+
+    [<Test>]
+    let ``Test function 'wordsToPhrase'`` () = Assert.That(wordsToPhrase ["quick"; "fast"; "run"], Is.EqualTo("quick fast run"))
+
+    [<TestCase("apple", ExpectedResult = "appleay")>]
+    [<TestCase("ear", ExpectedResult = "earay")>]
+    [<TestCase("igloo", ExpectedResult = "iglooay")>]
+    [<TestCase("object", ExpectedResult = "objectay")>]
+    [<TestCase("under", ExpectedResult = "underay")>]
+    let ``Ay is added to words that start with vowels`` (word) =
+        translate word
+
+    [<TestCase("pig", ExpectedResult = "igpay")>]
+    [<TestCase("koala", ExpectedResult = "oalakay")>]
+    [<TestCase("yellow", ExpectedResult = "ellowyay")>]
+    [<TestCase("xenon", ExpectedResult = "enonxay")>]
+    let ``First letter and ay are moved to the end of words that start with consonants`` (word) =
+        translate word
+
+    [<Test>]
+    let ``Ch is treated like a single consonant`` () =
+        Assert.That(translate "chair", Is.EqualTo("airchay"))
+
+    [<Test>]
+    let ``Qu is treated like a single consonant`` () =
+        Assert.That(translate "queen", Is.EqualTo("eenquay"))
+
+    [<Test>]
+    let ``Qu and a single preceding consonant are treated like a single consonant`` () =
+        Assert.That(translate "square", Is.EqualTo("aresquay"))
+
+    [<Test>]
+    let ``Th is treated like a single consonant`` () =
+        Assert.That(translate "therapy", Is.EqualTo("erapythay"))
+
+    [<Test>]
+    let ``Thr is treated like a single consonant`` () =
+        Assert.That(translate "thrush", Is.EqualTo("ushthray"))
+
+    [<Test>]
+    let ``Sch is treated like a single consonant`` () =
+        Assert.That(translate "school", Is.EqualTo("oolschay"))
+
+    [<Test>]
+    let ``Yt is treated like a single vowel`` () =
+        Assert.That(translate "yttria", Is.EqualTo("yttriaay"))
+
+    [<Test>]
+    let ``Xr is treated like a single vowel`` () =
+        Assert.That(translate "xray", Is.EqualTo("xrayay"))
+
+    [<Test>]
+    let ``Phrases are translated`` () =
+        Assert.That(translate "quick fast run", Is.EqualTo("ickquay astfay unray"))
+
+// kod
+module PigLatin =
+
+    let stringToCharList (s : string) = s.ToCharArray() |> List.ofArray
+
+    let charListToString (list : char list) = list |> List.map(fun c -> c.ToString()) |> List.reduce(fun s str -> s + str)
+
+    let phraseToWords (phrase : string) = phrase.Split(' ') |> List.ofArray
+
+    let wordsToPhrase (words : string list) = words |> List.reduce(fun s str -> s + " " + str)
+
+    let translateWord (word : char list) =
+        match word with
+        | 'a' :: rest
+        | 'e' :: rest
+        | 'i' :: rest
+        | 'o' :: rest
+        | 'u' :: rest
+        | 'x' :: 'r' :: rest
+        | 'y' :: 't' :: rest            -> word @ ['a'; 'y']
+        | 'c' :: 'h' :: rest            -> rest @ ['c'; 'h'; 'a'; 'y']
+        | 'q' :: 'u' :: rest            -> rest @ ['q'; 'u'; 'a'; 'y']
+        |  c  :: 'q' :: 'u' :: rest     -> rest @ [c] @ ['q'; 'u'; 'a'; 'y']
+        | 't' :: 'h' :: 'r' :: rest     -> rest @ ['t'; 'h'; 'r'; 'a'; 'y']
+        | 't' :: 'h' :: rest            -> rest @ ['t'; 'h'; 'a'; 'y']
+        | 's' :: 'c' :: 'h' :: rest     -> rest @ ['s'; 'c'; 'h'; 'a'; 'y']
+        |  c  :: rest                   -> rest @ [c] @ ['a'; 'y']
+        | _ -> []
+
+    let translateWords (words : string list) = words |> List.map(fun word -> word |> stringToCharList |> translateWord |> charListToString)
+
+    let translate (phrase : string) = phrase |> phraseToWords |> translateWords |> wordsToPhrase

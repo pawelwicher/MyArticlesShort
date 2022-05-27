@@ -1,0 +1,24 @@
+﻿Kilka podstawowych przykładów użycia rekursji w Haskell'u
+
+-- length
+lenR :: [Int] -> Int
+lenR [] = 0
+lenR (x:xs) = 1 + lenR xs
+
+-- sum
+sumR :: [Int] -> Int
+sumR [] = 0
+sumR (x:xs) = x + sumR xs
+
+-- reverse
+revR :: [Int] -> [Int]
+revR [] = []
+revR (x:xs) = revR xs ++ [x]
+
+-- maximum
+maxR :: [Int] -> Int
+maxR [x] = x
+maxR (x:xs)
+    | x > t = x  
+    | otherwise = t  
+    where t = maxR xs 

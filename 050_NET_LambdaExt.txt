@@ -1,0 +1,25 @@
+﻿using System;
+using static Debug.LambdaExt;
+
+namespace Debug
+{
+    public static class LambdaExt
+    {
+        public static Action fun(Action f) => f;
+        public static Action<T1> fun<T1>(Action<T1> f) => f;
+
+        public static Func<R> fun<R>(Func<R> f) => f;
+        public static Func<T1, R> fun<T1, R>(Func<T1, R> f) => f;
+        public static Func<T1, T2, R> fun<T1, T2, R>(Func<T1, T2, R> f) => f;
+    }
+
+    public static class Program
+    {
+        public static void Main(string[] args)
+        {
+            var square = fun((int x) => x * x);
+
+            Console.WriteLine(square(2));
+        }
+    }
+}

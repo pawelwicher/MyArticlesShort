@@ -1,0 +1,44 @@
+﻿Spróbujmy uruchomić następujący kod T-SQL:
+
+use northwind
+
+if exists(select * from sys.tables where name = 'Persons') exec ('drop table Persons')
+
+create table Persons (ID int NOT NULL, Name varchar(50))
+
+insert Persons(ID, Name) values (1, 'John Smith')
+insert Persons(ID, Name) values (2, 'Richard Very Very Very Very Very Very Very Long')
+
+alter table Persons alter column Name varchar(30)
+
+Po założeniu tablic i zapełnieniu jej danymi stwierdzamy, że kolumna tekstowa jest za długa.
+W ostatniej instrukcji zmieniamy rozmiar kolumny 'Name' z 50 na 30 znaków.
+Jednak operacja ta nie powiedzie się - otrzymamy błąd:
+
+String or binary data would be truncated.
+
+Jest do blokada / ostrzeżenie przed utratą danych (w jednym z wierszy mamy ponad 30 znaków).
+
+Jeżeli jednak nie przeszkadza nam utrata danych (bo np. operujemy na bazie developerskiej)
+należy skorzystać z polecenia SET ANSI_WARNINGS { OFF | ON  , show = false }, które wyłączy blokadę obcięcia danych.
+
+use northwind
+
+if exists(select * from sys.tables where name = 'Persons') exec ('drop table Persons')
+
+create table Persons (ID int NOT NULL, Name varchar(50))
+
+insert Persons(ID, Name) values (1, 'John Smith')
+insert Persons(ID, Name) values (2, 'Richard Very Very Very Very Very Very Very Long')
+
+SET ANSI_WARNINGS OFF
+alter table Persons alter column Name varchar(30)
+SET ANSI_WARNINGS ON
+
+Kod wykonał się bez błędów. Dane w wierszu drugim zostały przycięte.
+
+select * from Persons
+
+ID	Name
+1	John Smith
+2	Richard Very Very Very Very Ve
